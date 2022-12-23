@@ -1,6 +1,6 @@
 import numpy as np
 
-def initialize_params(N, M, B):
+def initialize_params(N, M, B, K):
     """
     辞書と係数マップを初期化する関数
 
@@ -12,6 +12,8 @@ def initialize_params(N, M, B):
         作成する辞書の枚数
     B : int
         辞書の縦（または横）の画素数
+    K : int
+        学習枚数
 
     Returns
     -------
@@ -27,7 +29,7 @@ def initialize_params(N, M, B):
 
     D = np.random.normal(loc=0, scale=1, size=(M, B, B)) #平均0, 分散1の正規分布で初期化
     D = np.pad(D, ((0, 0), (0, N-B), (0, N-B))) #(:, N-B:N, N-B:N)を0パディング
-    X = np.zeros(shape=(N, N))
+    X = np.zeros(shape=(K, M, N, N))
 
     return D, X
 
