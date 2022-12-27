@@ -23,13 +23,14 @@ def initialize_params(N, M, B, K):
         パディングされた状態で出力
     
     X : np.array
-        size = (M, N, N)
+        size = (K, M, N, N)
         係数マップ
     """
 
     D = np.random.normal(loc=0, scale=1, size=(M, B, B)) #平均0, 分散1の正規分布で初期化
     D = np.pad(D, ((0, 0), (0, N-B), (0, N-B))) #(:, N-B:N, N-B:N)を0パディング
     X = np.zeros(shape=(K, M, N, N))
+    # X = np.random.normal(loc=0, scale=1, size=(K, M, N, N))
 
     return D, X
 

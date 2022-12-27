@@ -10,9 +10,11 @@ def load_dataset(path):
     ----------
     path : str
            画像が入っているディレクトリのpath
-
+           
     returns
     -------
+    K : int
+        取得した画像の枚数
     S : np.array
         size = (K, N, N)
     """
@@ -22,8 +24,9 @@ def load_dataset(path):
         if not os.path.isfile(os.path.join(path, file_name)): #ファイル名がディレクトリの場合はスルーする
             continue
 
-        S.append(np.array(Image.open(os.path.join(path, file_name)))) #画像を取得してSにくっつける
-    return np.array(S)
+        S.append(np.array(Image.open(os.path.join(path, file_name)))/255) #画像を取得してSにくっつける
+
+    return len(S), np.array(S)
 
 if __name__ == "__main__":
     print(load_dataset("../../dataset").shape)
