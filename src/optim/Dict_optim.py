@@ -82,7 +82,7 @@ class Dict_optim:
 
     def update_D(self):
         """
-        Dを更新する.
+        辞書Dを更新する.
         更新の流れは次のようになっている.
         1. 複数の画像を一枚の画像にする. 本来はしてはいけないけどめんどくさいから代替案として採用. 極端に精度が落ちることはなさそうな気がする.
         1. X, S, G, Uを2DでFFT. 正規化が必ず必要.
@@ -110,25 +110,6 @@ class Dict_optim:
 
         #4.
         self.D = np.fft.ifft2(D_hat, norm="ortho").real
-
-
-        # X_hat = np.fft.fft2(self.X, norm="ortho") #(K, M, N, N)
-        # S_hat = np.fft.fft2(self.S, norm="ortho") #(K, N, N)
-        # G_hat = np.fft.fft2(self.G, norm="ortho") #(M, N, N)
-        # U_hat = np.fft.fft2(self.U, norm="ortho") #(M, N, N)
-
-        # #2.
-        # X_hat_conjugation = np.conjugate(X_hat) #(K, M, N, N)
-        # S_hat = S_hat[:, np.newaxis, :, :] #(K, 1, N, N)
-        # left_side = np.sum(X_hat_conjugation*S_hat, axis=0) + self.Rho * (G_hat - U_hat) #(M, N, N)
-        # # diag_inv = 1 / (1 + np.sum(X_hat * X_hat_conjugation, axis=1)/self.Rho) #(K, N, N)
-        # diag_inv = 1 / (1 + np.sum(X_hat * X_hat_conjugation, axis=(0, 1))/self.Rho) #(N, N) #ここがなんで上手くいくのかがよくわからない.
-        # # D_hat = left_side/self.Rho - np.sum(X_hat_conjugation * (diag_inv * np.sum(X_hat * left_side[np.newaxis, :, :, :], axis=1))[:, np.newaxis, :, :], axis=0)/self.Rho**2
-        # D_hat = left_side/self.Rho - np.sum(X_hat_conjugation * (diag_inv * np.sum(X_hat * left_side[np.newaxis, :, :, :], axis=1))[:, np.newaxis, :, :], axis=0)/self.Rho**2
-        # # D_hat = left_side/self.Rho - np.sum(X_hat * (diag_inv * np.sum(D_hat * left_side[np.newaxis, :, :, :], axis=1)), axis=0)
-
-        # #3.
-        # self.D = np.fft.ifft2(D_hat, norm="ortho").real 
     
     def update_G(self):
         """
