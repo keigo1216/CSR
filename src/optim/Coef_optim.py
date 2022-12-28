@@ -53,20 +53,22 @@ class Coef_optim:
 
         self.S = S
         self.X = X
-        self.reset_parameters
+        # self.reset_parameters
         
     def reset_parameters(self):
         self.Y = self.X #制約条件のX-Y=0より
         self.U = np.zeros(shape=(self.K, self.M, self.N, self.N)) #双対変数Uの初期化
 
 
-    def coef_update(self, D):
+    def coef_update(self, D, iteration):
         """
         Parameters
         ----------
         D : np.array
             size = (M, N, N)
             辞書（係数の最適化をする際は定数として扱う）
+        iteration : int
+            係数マップの最適化回数
 
         Returns
         -------
@@ -76,13 +78,17 @@ class Coef_optim:
         """
 
         self.D = D
+
+        self.reset_parameters()
         
-        #画像ごとに最適化する
-        for k in range(self.K):
-            self.update_X(k)
-            self.update_Y(k)
-            self.update_U(k)
-        
+        for i in range(iteration):
+            #最適化を一回回す
+            #画像ごとに最適化する
+            for k in range(self.K):
+                self.update_X(k)
+                self.update_Y(k)
+                self.update_U(k)
+            
         return self.X
         
     def update_X(self, k):

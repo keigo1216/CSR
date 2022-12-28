@@ -51,20 +51,22 @@ class Dict_optim:
 
         self.S = S
         self.D = D
-        self.reset_parameters()
+        # self.reset_parameters()
 
     def reset_parameters(self):
         self.G = self.D #制約条件D-G=0より
         self.U = np.zeros(shape=(self.M, self.N, self.N)) #双対変数Uの初期化
     
-    def dict_update(self, X):
+    def dict_update(self, X, iteration):
         """
         Parameters
         ----------
         X : np.array
             size = (K, M, N, N)
             係数マップ
-        
+        iteration : int
+            辞書の最適化を行う回数
+
         Returns
         -------
         D : np.array
@@ -74,9 +76,12 @@ class Dict_optim:
 
         self.X = X
 
-        self.update_D()
-        self.update_G()
-        self.update_U()
+        self.reset_parameters()
+        
+        for i in range(iteration):
+            self.update_D()
+            self.update_G()
+            self.update_U()
 
         return self.D
 
@@ -85,8 +90,7 @@ class Dict_optim:
         辞書Dを更新する.
         更新の流れは次のようになっている.
         1. 複数の画像を一枚の画像にする. 本来はしてはいけないけどめんどくさいから代替案として採用. 極端に精度が落ちることはなさそうな気がする.
-        1. X, S, G, Uを2DでFFT. 正規化が必ず必要.
-        2. 複数枚の画像を一枚の画像に直す. 係数の最適化のように上手いことできないから代替案（原著の(3)のやり方）
+        2. X, S, G, Uを2DでFFT. 正規化が必ず必要.
         3. 逆行列の補助定理を使いながら最適なD_hatを計算する.
         4. 逆フーリエ変換して最適なDを計算する
         """
@@ -137,5 +141,4 @@ class Dict_optim:
         """
         Uを更新する
         """
-
         self.U = self.U + self.D - self.G

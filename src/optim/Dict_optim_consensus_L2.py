@@ -1,7 +1,7 @@
 import numpy as np
 from .Dict_optim import Dict_optim
 
-class Dict_optim_consensus(Dict_optim):
+class Dict_optim_consensus_L2(Dict_optim):
     def __init__(self, D, S, args):
         super().__init__(D, S, args)
         self.D_k = np.zeros(shape=(self.K, self.M, self.N, self.N)) #コンセンサス方式で使う変数
@@ -10,7 +10,7 @@ class Dict_optim_consensus(Dict_optim):
         self.G = self.D
         self.U = np.zeros(shape=(self.K, self.M, self.N, self.N))
 
-    def dict_update(self, X):
+    def dict_update(self, X, iteration):
         """
         Parameters
         ----------
@@ -18,6 +18,8 @@ class Dict_optim_consensus(Dict_optim):
         X : np.array
             size = (K, M, N, N)
             係数マップ
+        iteration : int
+            辞書の最適化を行う回数
         
         Returns
         ------
@@ -28,17 +30,21 @@ class Dict_optim_consensus(Dict_optim):
 
         self.X = X
 
-        #画像ごとに辞書を更新する
-        for k in range(self.K):
-            self.update_D(k)
-
-        #Gを更新（Kには依存していないことに注意）
-        self.update_G()
-
-        #双対変数を画像ごとに最適化する 
-        # for k in range(self.K):
-        self.update_U(k)
+        self.reset_parameters()
         
+        for i in range(iteration):
+
+            #画像ごとに辞書を更新する
+            for k in range(self.K):
+                self.update_D(k)
+
+            #Gを更新（Kには依存していないことに注意）
+            self.update_G()
+
+            #双対変数を画像ごとに最適化する 
+            # for k in range(self.K):
+            self.update_U(k)
+            
         self.D = self.D_k[0]
         return self.D
 
